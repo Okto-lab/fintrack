@@ -1,1 +1,951 @@
 
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FinTrack - Personal Expense Tracker</title>
+
+<style>
+:root {
+  --primary: #6658e8;
+  --green: #159b72;
+  --red: #e45b68;
+  --bg: #f5f7fb;
+  --text: #172033;
+  --muted: #788197;
+  --line: #e9edf4;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.container {
+  max-width: 1100px;
+  margin: auto;
+  padding: 25px 18px;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-icon {
+  background: var(--primary);
+  color: white;
+  width: 45px;
+  height: 45px;
+  border-radius: 13px;
+  display: grid;
+  place-items: center;
+  font-size: 23px;
+  font-weight: bold;
+}
+
+.logo h2 {
+  margin: 0;
+}
+
+.logo small {
+  color: var(--muted);
+}
+
+h1 {
+  font-size: 27px;
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  color: var(--muted);
+  margin-bottom: 25px;
+}
+
+.dashboard {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.card, .panel {
+  background: white;
+  border: 1px solid var(--line);
+  padding: 22px;
+  border-radius: 17px;
+  box-shadow: 0 5px 20px rgba(0,0,0,.04);
+}
+
+.card h4 {
+  color: var(--muted);
+  margin: 0 0 15px;
+  font-size: 14px;
+}
+
+.card h2 {
+  margin: 0;
+  font-size: 25px;
+  overflow-wrap: anywhere;
+}
+
+.balance h2 {
+  color: var(--primary);
+}
+
+.income h2 {
+  color: var(--green);
+}
+
+.expense h2 {
+  color: var(--red);
+}
+
+.main-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 20px;
+}
+
+.panel {
+  margin-bottom: 20px;
+}
+
+.panel h3 {
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  margin-bottom: 7px;
+  font-size: 13px;
+  font-weight: bold;
+  color: #555e72;
+}
+
+input, select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #dfe3eb;
+  border-radius: 9px;
+  margin-bottom: 15px;
+  font-size: 14px;
+  outline: none;
+  background: white;
+}
+
+input:focus, select:focus {
+  border-color: var(--primary);
+}
+
+.type-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 17px;
+}
+
+.type-buttons button {
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 9px;
+  cursor: pointer;
+  background: #f5f5f8;
+  font-weight: bold;
+}
+
+.type-buttons button.active {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+.submit-btn {
+  width: 100%;
+  padding: 13px;
+  border: none;
+  border-radius: 9px;
+  background: var(--primary);
+  color: white;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.submit-btn:hover {
+  opacity: .9;
+}
+
+.message {
+  color: var(--red);
+  font-size: 13px;
+  min-height: 16px;
+}
+
+.history-tools {
+  display: flex;
+  gap: 8px;
+}
+
+.history-tools input,
+.history-tools select {
+  min-width: 0;
+}
+
+.transaction {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border-bottom: 1px solid var(--line);
+  padding: 14px 0;
+}
+
+.transaction:last-child {
+  border: none;
+}
+
+.transaction-info {
+  min-width: 0;
+  flex: 1;
+}
+
+.transaction-info strong {
+  display: block;
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
+
+.transaction-info small {
+  color: var(--muted);
+  display: block;
+  margin-top: 5px;
+}
+
+.amount {
+  font-size: 13px;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.amount.income {
+  color: var(--green);
+}
+
+.amount.expense {
+  color: var(--red);
+}
+
+.delete-btn {
+  background: #fff0f1;
+  color: var(--red);
+  border: none;
+  border-radius: 7px;
+  padding: 7px 10px;
+  cursor: pointer;
+}
+
+.category-item {
+  margin-bottom: 18px;
+}
+
+.category-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+
+.bar {
+  height: 9px;
+  background: #eeeef5;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  background: var(--primary);
+  border-radius: 20px;
+}
+
+.empty {
+  text-align: center;
+  color: var(--muted);
+  padding: 25px 5px;
+  font-size: 13px;
+}
+
+footer {
+  text-align: center;
+  color: var(--muted);
+  font-size: 12px;
+  margin-top: 25px;
+}
+
+@media(max-width: 750px) {
+  .dashboard {
+    grid-template-columns: 1fr;
+  }
+
+  .main-grid {
+    grid-template-columns: 1fr;
+  }
+
+  header {
+    gap: 10px;
+  }
+
+  .card h2 {
+    font-size: 23px;
+  }
+}
+
+@media(max-width: 400px) {
+  .history-tools {
+    flex-direction: column;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">F</div>
+    <div>
+      <h2>FinTrack</h2>
+      <small>Personal Expense Tracker</small>
+    </div>
+  </div>
+  <small id="today"></small>
+</header>
+
+<h1>Halo, pengelola uang! 👋</h1>
+<p class="subtitle">
+  Pantau keuanganmu dan kelola uang dengan lebih bijak.
+</p>
+
+<!-- DASHBOARD -->
+<div class="dashboard">
+
+  <div class="card balance">
+    <h4>💰 Total Saldo</h4>
+    <h2 id="balance">Rp0</h2>
+  </div>
+
+  <div class="card income">
+    <h4>📈 Total Pemasukan</h4>
+    <h2 id="income">Rp0</h2>
+  </div>
+
+  <div class="card expense">
+    <h4>📉 Total Pengeluaran</h4>
+    <h2 id="expense">Rp0</h2>
+  </div>
+
+</div>
+
+<div class="main-grid">
+
+<!-- FORM DAN RIWAYAT -->
+<div>
+
+  <div class="panel">
+    <h3>➕ Tambah Transaksi</h3>
+
+    <label>Jenis Transaksi</label>
+
+    <div class="type-buttons">
+      <button id="expenseBtn"
+        class="active" type="button"
+        onclick="setType('expense')">
+        − Pengeluaran
+      </button>
+
+      <button id="incomeBtn"
+        type="button"
+        onclick="setType('income')">
+        + Pemasukan
+      </button>
+    </div>
+
+    <form id="transactionForm">
+
+      <label>Nama Transaksi</label>
+      <input id="name" type="text"
+        maxlength="60"
+        placeholder="Contoh: Makan siang"
+        required>
+
+      <label>Nominal (Rp)</label>
+      <input id="amount" type="number"
+        min="1" step="1"
+        placeholder="Contoh: 25000"
+        required>
+
+      <label>Kategori</label>
+      <select id="category" required></select>
+
+      <label>Tanggal</label>
+      <input id="date" type="date" required>
+
+      <button class="submit-btn" type="submit">
+        Simpan Transaksi
+      </button>
+
+      <p class="message" id="message"></p>
+
+    </form>
+  </div>
+
+  <div class="panel">
+    <h3>📋 Riwayat Transaksi</h3>
+
+    <div class="history-tools">
+      <input id="search" type="search"
+        placeholder="Cari transaksi...">
+
+      <select id="filter">
+        <option value="all">Semua</option>
+        <option value="income">Pemasukan</option>
+        <option value="expense">Pengeluaran</option>
+      </select>
+    </div>
+
+    <div id="transactions"></div>
+  </div>
+
+</div>
+
+<!-- RINGKASAN KATEGORI -->
+<div>
+
+  <div class="panel">
+    <h3>📊 Pengeluaran per Kategori</h3>
+
+    <div id="categories"></div>
+
+    <hr style="border:0;border-top:1px solid #eee">
+
+    <p id="categoryTotal"
+      style="font-size:13px;color:#788197">
+      Total pengeluaran: Rp0
+    </p>
+  </div>
+
+</div>
+
+</div>
+
+<footer>
+  FinTrack © <span id="year"></span>
+  · Manage your money wisely.
+</footer>
+
+</div>
+
+<script>
+
+// =================================
+// FINTRACK - JAVASCRIPT
+// =================================
+
+const STORAGE_KEY = "fintrack_transactions_v1";
+
+const categoryOptions = {
+  expense: [
+    "Makanan",
+    "Transportasi",
+    "Pendidikan",
+    "Belanja",
+    "Hiburan",
+    "Tagihan",
+    "Kesehatan",
+    "Lainnya"
+  ],
+  income: [
+    "Uang Saku",
+    "Gaji",
+    "Hadiah",
+    "Beasiswa",
+    "Bisnis",
+    "Lainnya"
+  ]
+};
+
+const money = new Intl.NumberFormat("id-ID", {
+  style: "currency",
+  currency: "IDR",
+  maximumFractionDigits: 0
+});
+
+let transactions = loadData();
+let currentType = "expense";
+
+// =================================
+// TANGGAL
+// =================================
+
+function localDate() {
+  const d = new Date();
+
+  return [
+    d.getFullYear(),
+    String(d.getMonth() + 1).padStart(2, "0"),
+    String(d.getDate()).padStart(2, "0")
+  ].join("-");
+}
+
+document.getElementById("date").value = localDate();
+
+document.getElementById("today").textContent =
+  new Date().toLocaleDateString("id-ID", {
+    day: "numeric",
+    month: "long",
+    year: "numeric"
+  });
+
+document.getElementById("year").textContent =
+  new Date().getFullYear();
+
+// =================================
+// LOCAL STORAGE
+// =================================
+
+function loadData() {
+  try {
+    const data = JSON.parse(
+      localStorage.getItem(STORAGE_KEY) || "[]"
+    );
+
+    if (!Array.isArray(data)) return [];
+
+    return data.filter(t =>
+      t &&
+      typeof t.id === "string" &&
+      ["income", "expense"].includes(t.type) &&
+      typeof t.name === "string" &&
+      Number.isSafeInteger(t.amount) &&
+      t.amount > 0 &&
+      typeof t.category === "string" &&
+      typeof t.date === "string"
+    );
+
+  } catch (error) {
+    console.error("Gagal membaca data:", error);
+    return [];
+  }
+}
+
+function saveData() {
+  try {
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify(transactions)
+    );
+    return true;
+  } catch (error) {
+    alert("Data gagal disimpan. Periksa penyimpanan browser.");
+    return false;
+  }
+}
+
+// =================================
+// PILIH JENIS TRANSAKSI
+// =================================
+
+function setType(type) {
+
+  currentType = type;
+
+  document.getElementById("expenseBtn")
+    .classList.toggle("active", type === "expense");
+
+  document.getElementById("incomeBtn")
+    .classList.toggle("active", type === "income");
+
+  const category = document.getElementById("category");
+
+  category.innerHTML = "";
+
+  categoryOptions[type].forEach(item => {
+    const option = document.createElement("option");
+    option.value = item;
+    option.textContent = item;
+    category.appendChild(option);
+  });
+
+  document.getElementById("message").textContent = "";
+}
+
+// =================================
+// FORMAT NOMINAL
+// =================================
+
+function formatMoney(value) {
+  return money.format(value);
+}
+
+function formatDate(value) {
+  const d = new Date(value + "T00:00:00");
+
+  if (isNaN(d.getTime())) return value;
+
+  return d.toLocaleDateString("id-ID", {
+    day: "numeric",
+    month: "short",
+    year: "numeric"
+  });
+}
+
+// =================================
+// TAMBAH TRANSAKSI
+// =================================
+
+document.getElementById("transactionForm")
+  .addEventListener("submit", function(e) {
+
+  e.preventDefault();
+
+  const name = document.getElementById("name")
+    .value.trim();
+
+  const amountText = document.getElementById("amount")
+    .value.trim();
+
+  const amount = Number(amountText);
+
+  const category = document.getElementById("category")
+    .value;
+
+  const date = document.getElementById("date")
+    .value;
+
+  const message = document.getElementById("message");
+
+  message.textContent = "";
+
+  if (!name) {
+    message.textContent = "Nama transaksi wajib diisi.";
+    return;
+  }
+
+  if (
+    !amountText ||
+    !Number.isFinite(amount) ||
+    amount <= 0
+  ) {
+    message.textContent =
+      "Nominal harus lebih besar dari nol.";
+    return;
+  }
+
+  if (!Number.isSafeInteger(amount)) {
+    message.textContent =
+      "Gunakan nominal Rupiah tanpa angka desimal.";
+    return;
+  }
+
+  if (!categoryOptions[currentType].includes(category)) {
+    message.textContent = "Kategori tidak valid.";
+    return;
+  }
+
+  if (!date || isNaN(new Date(date + "T00:00:00").getTime())) {
+    message.textContent = "Tanggal wajib diisi.";
+    return;
+  }
+
+  const transaction = {
+    id: window.crypto?.randomUUID
+      ? window.crypto.randomUUID()
+      : Date.now().toString() + Math.random(),
+
+    type: currentType,
+    name: name,
+    amount: amount,
+    category: category,
+    date: date
+  };
+
+  transactions.push(transaction);
+
+  if (!saveData()) {
+    transactions.pop();
+    return;
+  }
+
+  this.reset();
+
+  setType("expense");
+
+  document.getElementById("date").value = localDate();
+
+  message.style.color = "green";
+  message.textContent = "Transaksi berhasil ditambahkan!";
+
+  render();
+});
+
+// =================================
+// DASHBOARD
+// =================================
+
+function renderDashboard() {
+
+  let totalIncome = 0;
+  let totalExpense = 0;
+
+  transactions.forEach(t => {
+
+    if (t.type === "income") {
+      totalIncome += t.amount;
+    } else {
+      totalExpense += t.amount;
+    }
+
+  });
+
+  document.getElementById("balance").textContent =
+    formatMoney(totalIncome - totalExpense);
+
+  document.getElementById("income").textContent =
+    formatMoney(totalIncome);
+
+  document.getElementById("expense").textContent =
+    formatMoney(totalExpense);
+}
+
+// =================================
+// RIWAYAT TRANSAKSI
+// =================================
+
+function escapeHTML(value) {
+  return String(value).replace(/[&<>"']/g, c => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  })[c]);
+}
+
+function renderTransactions() {
+
+  const container = document.getElementById("transactions");
+
+  const search = document.getElementById("search")
+    .value.toLowerCase().trim();
+
+  const filter = document.getElementById("filter")
+    .value;
+
+  const data = [...transactions]
+    .filter(t => filter === "all" || t.type === filter)
+    .filter(t =>
+      (t.name + " " + t.category)
+        .toLowerCase()
+        .includes(search)
+    )
+    .sort((a, b) => b.date.localeCompare(a.date));
+
+  if (data.length === 0) {
+
+    container.innerHTML = `
+      <div class="empty">
+        Belum ada transaksi ditemukan.
+      </div>
+    `;
+
+    return;
+  }
+
+  container.innerHTML = data.map(t => {
+
+    const isIncome = t.type === "income";
+
+    return `
+      <div class="transaction">
+
+        <div class="transaction-info">
+          <strong>${escapeHTML(t.name)}</strong>
+
+          <small>
+            ${escapeHTML(t.category)}
+            · ${escapeHTML(formatDate(t.date))}
+          </small>
+        </div>
+
+        <span class="amount ${t.type}">
+          ${isIncome ? "+" : "-"}${formatMoney(t.amount)}
+        </span>
+
+        <button
+          class="delete-btn"
+          onclick="deleteTransaction('${escapeHTML(t.id)}')"
+          aria-label="Hapus transaksi">
+          ✕
+        </button>
+
+      </div>
+    `;
+
+  }).join("");
+}
+
+// =================================
+// HAPUS TRANSAKSI
+// =================================
+
+function deleteTransaction(id) {
+
+  const item = transactions.find(t => t.id === id);
+
+  if (!item) return;
+
+  if (!confirm("Yakin ingin menghapus transaksi ini?")) {
+    return;
+  }
+
+  const previous = transactions;
+
+  transactions = transactions.filter(t => t.id !== id);
+
+  if (!saveData()) {
+    transactions = previous;
+    return;
+  }
+
+  render();
+}
+
+// =================================
+// RINGKASAN KATEGORI
+// =================================
+
+function renderCategories() {
+
+  const container = document.getElementById("categories");
+
+  const expenses = transactions.filter(
+    t => t.type === "expense"
+  );
+
+  const totals = {};
+
+  expenses.forEach(t => {
+
+    totals[t.category] =
+      (totals[t.category] || 0) + t.amount;
+
+  });
+
+  const entries = Object.entries(totals)
+    .sort((a, b) => b[1] - a[1]);
+
+  const total = expenses.reduce(
+    (sum, t) => sum + t.amount, 0
+  );
+
+  if (entries.length === 0) {
+
+    container.innerHTML = `
+      <div class="empty">
+        Belum ada data pengeluaran.
+      </div>
+    `;
+
+  } else {
+
+    container.innerHTML = entries.map(([name, amount]) => {
+
+      const percentage = total > 0
+        ? (amount / total) * 100
+        : 0;
+
+      return `
+        <div class="category-item">
+
+          <div class="category-heading">
+            <strong>${escapeHTML(name)}</strong>
+            <span>${formatMoney(amount)}</span>
+          </div>
+
+          <div class="bar">
+            <div class="bar-fill"
+              style="width:${percentage.toFixed(2)}%">
+            </div>
+          </div>
+
+          <small style="color:#788197">
+            ${percentage.toFixed(1)}%
+          </small>
+
+        </div>
+      `;
+
+    }).join("");
+
+  }
+
+  document.getElementById("categoryTotal")
+    .textContent = "Total pengeluaran: " + formatMoney(total);
+}
+
+// =================================
+// REFRESH SELURUH WEBSITE
+// =================================
+
+function render() {
+
+  renderDashboard();
+
+  renderTransactions();
+
+  renderCategories();
+
+}
+
+// =================================
+// SEARCH DAN FILTER
+// =================================
+
+document.getElementById("search")
+  .addEventListener("input", renderTransactions);
+
+document.getElementById("filter")
+  .addEventListener("change", renderTransactions);
+
+// =================================
+// INISIALISASI
+// =================================
+
+setType("expense");
+
+render();
+
+</script>
+
+</body>
+</html>
